@@ -73,7 +73,15 @@ function Pets() {
           console.error('Error submitting for adoption:', error);
         });
     }
-
+    setAdoptionData({
+      name: '',
+      age: '',
+      gender: 'Unknown',
+      species: '',
+      breed: '',
+      behavior: '',
+      image: '',
+    });
     // Close the modal after submission.
     handleModalClose();
   };

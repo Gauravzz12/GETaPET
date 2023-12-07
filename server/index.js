@@ -72,7 +72,7 @@ app.put("/updatePet/:id", function (req, res) {
       } else {
         console.log('Pet updated successfully');
         res.status(200).json({ success: true });
-        formData='';
+       
       }
     }
   );
