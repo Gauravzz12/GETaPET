@@ -11,13 +11,18 @@ function Pets() {
     species: '',
     breed: '',
     behavior: '',
-    image: '',
+    image: null, // Use null for the file
   });
   const [updatePetId, setUpdatePetId] = useState(null);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setAdoptionData({ ...adoptionData, [name]: value });
+    const { name, value, files } = e.target;
+
+    // Update the state based on the input type
+    setAdoptionData((prevData) => ({
+      ...prevData,
+      [name]: name === 'image' ? files[0] : value,
+    }));
   };
 
   const handlePutForAdoption = () => {
@@ -26,73 +31,90 @@ function Pets() {
 
   const handleModalClose = () => {
     setShowModal(false);
-    setUpdatePetId(null); // Clear updatePetId when closing the modal
+    setUpdatePetId(null);
   };
 
-  const handleAdoptSubmit = () => {
-    // Check if updatePetId exists, if so, update the pet
-    if (updatePetId) {
-      // Make a PUT request to the server endpoint
-      fetch(`http://localhost:4000/updatePet/${updatePetId}`, {
-  method: 'PUT',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(adoptionData),
-})
+  const uploadImage = async () => {
+    const url = 'https://upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com/api/upload-image';
 
-        .then(response => response.json())
-        .then(data => {
-          // Handle the response data if needed
-          console.log(data);
+    const data = new FormData();
+    data.append('file', adoptionData.image);
 
-          // Refresh the pets data after update
-          fetchPets();
-        })
-        .catch(error => {
-          console.error('Error updating pet:', error);
-        });
-    } else {
-      // Make a POST request to the server endpoint
-      fetch('http://localhost:4000/addPet', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(adoptionData),
-      })
-        .then(response => response.json())
-        .then(data => {
-          // Handle the response data if needed
-          console.log(data);
+    const options = {
+      method: 'POST',
+      headers: {
+        Accept: '*/*',
+        'X-RapidAPI-Key': '15b9d7e5bcmsh1e999e69dd63d31p1d9b4bjsn0a18576a2867',
+        'X-RapidAPI-Host': 'upload-image-and-return-url-by-thichthicodeteam.p.rapidapi.com',
+      },
+      body: data,
+    };
 
-          // Refresh the pets data after insertion
-          fetchPets();
-        })
-        .catch(error => {
-          console.error('Error submitting for adoption:', error);
-        });
+    try {
+      const response = await fetch(url, options);
+      const result = await response.text();
+      
+
+      // Extract the substring (you might want to change this logic based on your requirements)
+      var img = result.substring(9,result.length-2);
+      console.log(img);
+      console.log(adoptionData);
+      // Update the state with the new image URL
+      setAdoptionData((prevData) => ({
+        ...prevData,
+        image: img,
+      }));
+      adoptionData.image=img;
+      console.log(adoptionData);
+
+      // Handle the result as needed (update state, show a message, etc.)
+    } catch (error) {
+      console.error('Error uploading image:', error);
     }
-    setAdoptionData({
-      name: '',
-      age: '',
-      gender: 'Unknown',
-      species: '',
-      breed: '',
-      behavior: '',
-      image: '',
-    });
-    // Close the modal after submission.
-    handleModalClose();
+  };
+
+  const handleAdoptSubmit = async () => {
+    try {
+      // Upload the image and update the state
+      await uploadImage();
+
+      if (updatePetId) {
+        // Make a PUT request to the server endpoint
+        await fetch(`http://localhost:4000/updatePet/${updatePetId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(adoptionData),
+        });
+      } else {
+        // Make a POST request to the server endpoint
+        await fetch('http://localhost:4000/addPet', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(adoptionData),
+        });
+      }
+
+      // Refresh the pets data after submission
+      fetchPets();
+
+      // Close the modal after submission.
+      handleModalClose();
+    } catch (error) {
+      console.error('Error handling adoption submission:', error);
+    }
   };
 
   const fetchPets = () => {
     fetch('http://localhost:4000/')
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         setPets(data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error fetching pets:', error);
       });
   };
@@ -102,21 +124,20 @@ function Pets() {
     fetch(`http://localhost:4000/deletePet/${petId}`, {
       method: 'DELETE',
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         // Handle the response data if needed
         console.log(data);
 
         // Refresh the pets data after deletion
         fetchPets();
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error deleting pet:', error);
       });
   };
 
   const handleUpdatePet = (pet) => {
-    // Set the pet data to the modal form
     setAdoptionData({
       name: pet.name,
       age: pet.age,
@@ -127,15 +148,12 @@ function Pets() {
       image: pet.image,
     });
 
-    // Set the pet ID to updatePetId
     setUpdatePetId(pet.pet_id);
 
-    // Open the modal
     setShowModal(true);
   };
 
   useEffect(() => {
-    // Fetch pets data as before...
     fetchPets();
   }, []);
 
@@ -149,7 +167,7 @@ function Pets() {
       </h1>
 
       <Row xs={1} md={4} className="g-4">
-        {pets.map(pet => (
+        {pets.map((pet) => (
           <Col key={pet.pet_id}>
             <Card className="custom-card mb-3" style={{ border: '3px solid lightblue' }}>
               <Card.Img variant="top" src={pet.image} alt={pet.name} className="img" />
@@ -160,11 +178,11 @@ function Pets() {
                 <Card.Text className="pet-info">Species: {pet.species}</Card.Text>
                 <Card.Text className="pet-info">Breed: {pet.breed}</Card.Text>
                 <Card.Text className="pet-info">Behavior: {pet.behavior}</Card.Text>
-                <Button variant="danger" onClick={() => handleDeletePet(pet.pet_id)} className='Crud-btn'>
+                <Button variant="danger" onClick={() => handleDeletePet(pet.pet_id)} className="Crud-btn">
                   Delete
                 </Button>
-                
-                <Button variant="primary" onClick={() => handleUpdatePet(pet)} className='Crud-btn'>
+
+                <Button variant="primary" onClick={() => handleUpdatePet(pet)} className="Crud-btn">
                   Update
                 </Button>
               </Card.Body>
@@ -247,14 +265,8 @@ function Pets() {
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formImage">
-              <Form.Label>Image URL</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter pet's image URL"
-                name="image"
-                value={adoptionData.image}
-                onChange={handleInputChange}
-              />
+              <Form.Label>Image</Form.Label>
+              <Form.Control type="file" name="image" onChange={handleInputChange} />
             </Form.Group>
           </Form>
         </Modal.Body>
