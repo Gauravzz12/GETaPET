@@ -12,6 +12,10 @@
   margin-left:70px;
   font-size: large;
 }
+.aboutNavBar{
+  text-decoration: none;  
+  color:inherit;
+}
 body, html {
   margin: 0;
   padding: 0;
@@ -19,14 +23,19 @@ body, html {
   width: 100%;
 }
 
-
+.navBarLogoImg{
+  border-radius: 200px;
+  margin-top: -9px;
+}
 .Home-Container {
   height: 100vh;
+  position: relative;
 
 }
 
 .Home-Content {
-  margin-top: 70px; 
+  margin-top: -10px;
+  position: relative; 
 }
 
 .Home-img {
@@ -34,26 +43,112 @@ body, html {
   height: auto; 
   object-fit: cover;
   object-position: center;
+  z-index: -1; 
+  /* filter: brightness(50%); */
 }
-
+.centered-text {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+}
+.centered-text h1 {
+  font-size: 30px;
+  color: black;
+  font-family:'Times New Roman', Times, serif;
+  margin: 0; 
+}
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: -1; 
+}
 .pets-container {
-  margin: 0 auto; /* This should center the container */
+  margin: 0 auto; 
 }
 
 .Links:hover {
-  color: red; /* Change the color on hover */
+  color: red; 
 }
 
+.navBarItemStyle{
+  font-size: 20px; /* Increase the font size */
+  
+}
+.navBarItemStyle:hover {
+  font-size: 20px; /* Increase font size on hover */
+  color: #3366cc; /* Change color on hover */
+}
 .Links:hover::after {
   content: '';
   display: block;
   width: 0;
-  height: 2px;
-  background: red; /* Horizontal line below text on hover */
-  transition: width 0.3s;
+  /* height: 2px; */
+  background: red;
+  /* transition: width 0.3s; */
 }
 
 .nav-item:hover {
-  /* Optional: Change background color on hover */
-  background-color: #f0f0f0;
+  background-color: rgb(191, 179, 179);
 }
+.loginButton {
+  border: 1px solid #282b28;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  display: inline-block;
+  text-decoration: none;
+  color: #919492;
+  background-color: transparent; 
+  transition: border-color 0.3s ease; 
+}
+
+.loginButton:hover {
+  background-color: rgb(200, 196, 196);
+  color: white; 
+}
+
+
+/* ABOUT US SECTION  */
+                        
+#services .services-top {
+    padding: 70px 0 50px;
+}
+#services .services-list {
+    padding-top: 50px;
+}
+.services-list .service-block {
+    margin-bottom: 25px;
+}
+.services-list .service-block .ico {
+    font-size: 38px;
+    float: left;
+}
+.services-list .service-block .text-block {
+    margin-left: 58px;
+}
+.services-list .service-block .text-block .name {
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 5px;
+}
+.services-list .service-block .text-block .info {
+    font-size: 16px;
+    font-weight: 300;
+    margin-bottom: 10px;
+}
+.services-list .service-block .text-block .text {
+    font-size: 12px;
+    line-height: normal;
+    font-weight: 300;
+}
+.highlight {
+    color: #2ac5ed;
+    font-weight:bold;
+}                    
