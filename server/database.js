@@ -1,10 +1,14 @@
-var mysql=require("mysql");
+// database.js
+const mysql = require('mysql');
 
-var connection=mysql.createConnection({
-    host:'localhost',
-    database:'pet_adoption',
-    user:'root',
-    password:'1234'
-});
+// Replace the following with your own database connection details
+const dbConfig = {
+  host: 'localhost',
+  user: 'root',
+  password: '1234',
+  database: 'pet_adoption',
+};
 
-module.exports=connection;
+const connection = mysql.createConnection(dbConfig);
+
+module.exports = connection;
