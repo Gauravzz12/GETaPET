@@ -14,8 +14,7 @@
 }
 
 
-body,
-html {
+
 
 .aboutNavBar{
   text-decoration: none;  
@@ -72,7 +71,6 @@ html {
   background-color: rgba(0, 0, 0, 0.5); 
   z-index: -1; 
 }
-.pets-container {
 
 
 .Links:hover {
@@ -203,11 +201,7 @@ span {
   color: brown;
   font-family: Georgia, 'Times New Roman', Times, serif;
 }
-=======
-  /* height: 2px; */
-  background: red;
-  /* transition: width 0.3s; */
-}
+
 
 .nav-item:hover {
   background-color: rgb(191, 179, 179);
