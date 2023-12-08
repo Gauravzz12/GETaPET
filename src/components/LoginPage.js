@@ -1,6 +1,6 @@
 
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 export default function LoginPage() {
     return (
         <div>
@@ -47,7 +47,11 @@ export default function LoginPage() {
                                             <button className="btn btn-dark btn-lg btn-block" type="button">Login</button>
                                         </div>
 
-                                        <p className="mb-2" style={{ color: '#393f81', textAlign: 'center' }}>Forgot password? Don't have an account? <a href="#!" style={{ color: '#393f81' }}>Register here</a></p>
+                                        <p className="mb-2" style={{ color: '#393f81', textAlign: 'center' }}>Forgot password? Don't have an account? 
+                                             <Link to="/Register" style={{ color: '#393f81' }}>
+                                             Register here
+                                            </Link>
+                                        </p>
                                     </form>
                                 </div>
                             </div>
