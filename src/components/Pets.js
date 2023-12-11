@@ -1,9 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Col, Row, Button, Modal, Form } from 'react-bootstrap';
+import {Dropdown} from 'react-bootstrap';
+
+import { Link } from 'react-router-dom';
 
 function Pets() {
   const [pets, setPets] = useState([]);
+  const [selectedSortOption, setSelectedSortOption] = useState('default');
+  const [selectedFilterOption, setSelectedFilterOption] = useState('default');
+  const [userText, setUserText] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+
+
+  const handleSortSelect = (option) => {
+    setSelectedSortOption(option);
+  };
+
+  const handleFilterSelect = (option) => {
+    setSelectedFilterOption(option);
+    setShowFilterModal(true);
+  };
+
+  const handleUserTextChange = (event) => {
+    setUserText(event.target.value);
+  };
+  const handleFilterModalSave = () => {
+    setUserText(userText);
+    setShowFilterModal(false);
+  };
+
   const [adoptionData, setAdoptionData] = useState({
     name: '',
     age: '',
@@ -11,14 +37,12 @@ function Pets() {
     species: '',
     breed: '',
     behavior: '',
-    image: null, // Use null for the file
+    image: null,
   });
   const [updatePetId, setUpdatePetId] = useState(null);
-
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
 
-    // Update the state based on the input type
     setAdoptionData((prevData) => ({
       ...prevData,
       [name]: name === 'image' ? files[0] : value,
@@ -54,20 +78,14 @@ function Pets() {
       const response = await fetch(url, options);
       const result = await response.text();
       
-
-      // Extract the substring (you might want to change this logic based on your requirements)
       var img = result.substring(9,result.length-2);
-      console.log(img);
-      console.log(adoptionData);
-      // Update the state with the new image URL
+
       setAdoptionData((prevData) => ({
         ...prevData,
         image: img,
       }));
       adoptionData.image=img;
-      console.log(adoptionData);
 
-      // Handle the result as needed (update state, show a message, etc.)
     } catch (error) {
       console.error('Error uploading image:', error);
     }
@@ -75,11 +93,9 @@ function Pets() {
 
   const handleAdoptSubmit = async () => {
     try {
-      // Upload the image and update the state
       await uploadImage();
 
       if (updatePetId) {
-        // Make a PUT request to the server endpoint
         await fetch(`http://localhost:4000/updatePet/${updatePetId}`, {
           method: 'PUT',
           headers: {
@@ -88,7 +104,6 @@ function Pets() {
           body: JSON.stringify(adoptionData),
         });
       } else {
-        // Make a POST request to the server endpoint
         await fetch('http://localhost:4000/addPet', {
           method: 'POST',
           headers: {
@@ -98,45 +113,40 @@ function Pets() {
         });
       }
 
-      // Refresh the pets data after submission
       fetchPets();
-
-      // Close the modal after submission.
       handleModalClose();
     } catch (error) {
       console.error('Error handling adoption submission:', error);
     }
   };
+  const fetchPets = async () => {
+    try {
+      const apiUrl = `http://localhost:4000/?sort=${selectedSortOption}&f=${selectedFilterOption}&t=${userText}`;
+const response = await fetch(apiUrl);
 
-  const fetchPets = () => {
-    fetch('http://localhost:4000/')
-      .then((response) => response.json())
-      .then((data) => {
-        setPets(data);
-      })
-      .catch((error) => {
-        console.error('Error fetching pets:', error);
-      });
+      const data = await response.json();
+      setPets(data);
+
+    } catch (error) {
+      console.error('Error fetching pets:', error);
+    }
   };
 
   const handleDeletePet = (petId) => {
-    // Make a DELETE request to the server endpoint
     fetch(`http://localhost:4000/deletePet/${petId}`, {
       method: 'DELETE',
     })
       .then((response) => response.json())
       .then((data) => {
-        // Handle the response data if needed
         console.log(data);
-
-        // Refresh the pets data after deletion
         fetchPets();
       })
       .catch((error) => {
         console.error('Error deleting pet:', error);
       });
   };
-
+  
+  
   const handleUpdatePet = (pet) => {
     setAdoptionData({
       name: pet.name,
@@ -152,25 +162,83 @@ function Pets() {
 
     setShowModal(true);
   };
-
+  
+  
   useEffect(() => {
     fetchPets();
-  }, []);
+  }, [fetchPets]);
 
   return (
     <div className="pets-container mx-auto">
-      <h1 className="text-center">
+      <div>
+      <h1 className="text-center" style={{fontFamily:'cursive',color:'red'}}>
         Pets Available for Adoption
-        <Button variant="primary" onClick={handlePutForAdoption}>
-          Put for Adoption
-        </Button>
       </h1>
+      <Form>
+      <Form.Group controlId="sortDropdown" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+        <Dropdown>
+          <Dropdown.Toggle variant="success" id="dropdown-basic">
+            Sort By: {selectedSortOption}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+          <Dropdown.Item onClick={() => handleSortSelect('default')}>None</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleSortSelect('name')}>Name</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleSortSelect('age')}>Age</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleSortSelect('gender')}>Gender</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleSortSelect('species')}>Species</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleSortSelect('breed')}>Breed</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
 
+        <Dropdown>
+          <Dropdown.Toggle variant="success" id="dropdown-basic">
+            Filter By: {selectedFilterOption}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => handleFilterSelect('default')}>None</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleFilterSelect('age')}>Age</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleFilterSelect('gender')}>Gender</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleFilterSelect('species')}>Species</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleFilterSelect('breed')}>Breed</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+        
+      </Form.Group>
+      <Modal show={showFilterModal} onHide={() => setShowFilterModal(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Enter Text for {selectedFilterOption}</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form.Control
+      type="text"
+      placeholder={`Enter Value for ${selectedFilterOption}...`}
+      value={userText}
+      onChange={handleUserTextChange}
+    />
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowFilterModal(false)}>
+      Close
+    </Button>
+    <Button variant="primary" onClick={handleFilterModalSave}>
+      Save Changes
+    </Button>
+  </Modal.Footer>
+</Modal>
+    </Form>
+      </div>
       <Row xs={1} md={4} className="g-4">
         {pets.map((pet) => (
           <Col key={pet.pet_id}>
             <Card className="custom-card mb-3" style={{ border: '3px solid lightblue' }}>
-              <Card.Img variant="top" src={pet.image} alt={pet.name} className="img" />
+            <Link to={`/Adopt`}>
+                <Card.Img
+                  variant="top"
+                  src={pet.image}
+                  alt={pet.name}
+                  className="img"
+                />
+              </Link>
               <Card.Body>
                 <Card.Text className="pet-name">{pet.name}</Card.Text>
                 <Card.Text className="pet-info">Age: {pet.age} years</Card.Text>
@@ -181,7 +249,6 @@ function Pets() {
                 <Button variant="danger" onClick={() => handleDeletePet(pet.pet_id)} className="Crud-btn">
                   Delete
                 </Button>
-
                 <Button variant="primary" onClick={() => handleUpdatePet(pet)} className="Crud-btn">
                   Update
                 </Button>
@@ -189,16 +256,26 @@ function Pets() {
             </Card>
           </Col>
         ))}
+        <Col>
+          <Card
+            className="custom-card mb-3"
+            style={{ border: '3px dashed lightgreen', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            onClick={handlePutForAdoption}
+          >
+            <Card.Body>
+              <Card.Text style={{ fontSize: '2em', fontWeight: 'bold',textAlign: 'center' }}>+</Card.Text>
+              <Card.Text style={{ textAlign: 'center', fontWeight: 'bold',fontSize:'large' }}>Put for Adoption</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
       </Row>
 
-      {/* Modal for Adoption Form */}
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>{updatePetId ? 'Update Pet' : 'Put for Adoption'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
-            {/* Form fields for adoption data */}
             <Form.Group className="mb-3" controlId="formName">
               <Form.Label>Name</Form.Label>
               <Form.Control
@@ -209,7 +286,6 @@ function Pets() {
                 onChange={handleInputChange}
               />
             </Form.Group>
-
             <Form.Group className="mb-3" controlId="formAge">
               <Form.Label>Age</Form.Label>
               <Form.Control
@@ -220,7 +296,6 @@ function Pets() {
                 onChange={handleInputChange}
               />
             </Form.Group>
-
             <Form.Group className="mb-3" controlId="formGender">
               <Form.Label>Gender</Form.Label>
               <Form.Select name="gender" value={adoptionData.gender} onChange={handleInputChange}>
@@ -229,7 +304,6 @@ function Pets() {
                 <option value="Unknown">Unknown</option>
               </Form.Select>
             </Form.Group>
-
             <Form.Group className="mb-3" controlId="formSpecies">
               <Form.Label>Species</Form.Label>
               <Form.Control
@@ -240,7 +314,6 @@ function Pets() {
                 onChange={handleInputChange}
               />
             </Form.Group>
-
             <Form.Group className="mb-3" controlId="formBreed">
               <Form.Label>Breed</Form.Label>
               <Form.Control
@@ -251,7 +324,6 @@ function Pets() {
                 onChange={handleInputChange}
               />
             </Form.Group>
-
             <Form.Group className="mb-3" controlId="formBehavior">
               <Form.Label>Behavior</Form.Label>
               <Form.Control
@@ -263,7 +335,6 @@ function Pets() {
                 onChange={handleInputChange}
               />
             </Form.Group>
-
             <Form.Group className="mb-3" controlId="formImage">
               <Form.Label>Image</Form.Label>
               <Form.Control type="file" name="image" onChange={handleInputChange} />

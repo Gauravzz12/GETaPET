@@ -4,14 +4,6 @@ import '../styles/styles.css';
 function Home() {
   return (
    <>
-
-
-    {/* <div classNameName='Home-Container'>
-      <div classNameName='Home-Content'>
-        <img src='images/Home-Background.jpeg' className='Home-img' alt='HomeImage'/>
-      </div>
-    </div> */}
-
       <div className='Home-Content'>
           <div className='image-overlay'></div>
           <img src='images/Home-Background.jpeg' className='Home-img' alt='HomeImage'/>
@@ -24,7 +16,6 @@ function Home() {
 
 
 
-           {/* ABOUT SECTION */}
            <div className="container bootstrap snippets bootdey" id="aboutSection" >
            <section  className="current">
                <div className="services-top">

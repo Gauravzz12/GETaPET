@@ -5,7 +5,7 @@ import { Navbar, Nav, Container } from 'react-bootstrap';
 function NavBar() {
   return (
     <div>
-      <Navbar bg="#dae2f8" expand="lg" style={{backgroundColor:'Beige'}}>
+      <Navbar bg="#dae2f8" expand="lg" style={{backgroundColor:'Beige',fontSize:'larger'}} >
         <Container fluid>
           <Link to="/" className="Logo">
             <img
@@ -29,9 +29,7 @@ function NavBar() {
               <Nav.Link as={Link} to="/Adopt" className="Links navBarItemStyle">
                 ADOPT
               </Nav.Link>
-              {/* <Nav.Link as={Link} to="/aboutSection" className="Links">
-                ABOUT US
-              </Nav.Link> */}
+             
               <Nav.Link  href="#aboutSection" className="Links navBarItemStyle">
                 ABOUT US
               </Nav.Link>

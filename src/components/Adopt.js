@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 
-export default function Adopt() {
-  // Name ,email,pass,phone,breed,submit
+function Adopt() {
   return (
       <div>
             
@@ -17,7 +16,7 @@ export default function Adopt() {
                       <div className="card-body p-5">
                         <h2 className="text-uppercase text-center mb-5">PET ADOPTION FORM</h2>
 
-                        <form>
+                        <form >
 
                           <div className="form-outline mb-4">
                             <input type="text" id="form3Example1cg" className="form-control form-control-lg" placeholder=''/>
@@ -55,14 +54,13 @@ export default function Adopt() {
                           </div>
 
                           <div className="d-flex justify-content-center">
-                            <button type="submit"
-                              className="btn btn-dark btn-lg btn-block">REQUEST ADOPTION</button>
-                          </div>
+                          <Button variant="primary" >
+          Submit Adoption Request
+        </Button>
+        </div>
 
                           <p className="text-center text-muted mt-5 mb-0">Have already an account? 
-                              {/* <a href="#!"className="fw-bold text-body">
-                                    <u>Login here</u>
-                              </a> */}
+                             
                               <Link to="/Login" className="fw-bold text-body">
                                 <u> Login Here</u>
                               </Link>
@@ -84,3 +82,4 @@ export default function Adopt() {
   )     
 }
 
+export default Adopt;
